@@ -151,17 +151,6 @@ async def entrypoint(ctx: JobContext):
         use_tts_aligned_transcript=True,
     )
 
-    # avatar = simli.AvatarSession(
-    #     simli_config=simli.SimliConfig(
-    #         api_key='cy9oc4j2cdpqqndh8lhk6p',
-    #         face_id="cace3ef7-a4c4-425d-a8cf-a5358eb0c427",# ID of the Simli face to use for your avatar. See "Face setup" for details.
-    #         emotion_id="e6cebb46-e415-4a59-8f82-85fe36e5f1b1",
-    #     ),
-    # )
-    #
-    # # Start the avatar and wait for it to join
-    # await avatar.start(session, room=ctx.room)
-
     # ---- Create DefaultAgent instance ----
     agent_instance = DefaultAgent(user_name=user_name, topic=topic, level=level)
 
