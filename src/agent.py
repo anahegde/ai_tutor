@@ -56,14 +56,6 @@ class DefaultAgent(Agent):
         await context.session.aclose()
 
 
-
-    # async def on_message(self, message: str):
-    #     self.practice_count += 1
-    #     logger.info(f"Practice turn {self.practice_count}: {message}")
-    #
-    #     if self.practice_count >= 5:
-    #         # HARD guarantee — no LLM dependency
-    #         await self.end_call(RunContext(session=self.session))
     async def handle_turn(self, session: AgentSession):
         """Increment turn count and end call if max_turns reached."""
         self.turn_count += 1
@@ -162,12 +154,6 @@ async def entrypoint(ctx: JobContext):
     def on_user_input_transcribed(event: UserInputTranscribedEvent):
         # Reset silence timer on any speech
         asyncio.create_task(agent_instance.reset_silence_timer(session))
-        print(
-            f"User input transcribed: {event.transcript}, "
-            f"language: {event.language}, "
-            f"final: {event.is_final}, "
-            f"speaker id: {event.speaker_id}"
-        )
 
         if not event.is_final:
             return
@@ -209,7 +195,6 @@ async def entrypoint(ctx: JobContext):
 
         # Print payload nicely
         import json
-        print(json.dumps(payload, indent=2))
 
         # Forward to client
         asyncio.create_task(
