@@ -188,6 +188,37 @@ async def entrypoint(ctx: JobContext):
 
         asyncio.create_task(agent_instance.handle_turn(session))
 
+    @session.on("conversation_item_added")
+    def on_conversation_item_added(event):
+        # Extract the ChatMessage object
+        item = getattr(event, "item", None)
+        if item is None:
+            return
+
+        # Only process agent messages
+        if getattr(item, "role", None) != "assistant":
+            return
+
+        # Join content list into a single string
+        text = " ".join(item.content) if getattr(item, "content", None) else ""
+
+        payload = {
+            "type": "agent_transcript",
+            "text": text,
+        }
+
+        # Print payload nicely
+        import json
+        print(json.dumps(payload, indent=2))
+
+        # Forward to client
+        asyncio.create_task(
+            ctx.room.local_participant.publish_data(
+                json.dumps(payload).encode("utf-8"),
+                topic="transcript",
+            )
+        )
+
     # Start session
     await session.start(
         agent=agent_instance,
