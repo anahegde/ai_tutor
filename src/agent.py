@@ -16,6 +16,7 @@ from livekit.agents import (
 )
 from livekit.plugins import noise_cancellation, silero, simli
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
+from livekit.agents import UserInputTranscribedEvent
 
 logger = logging.getLogger("agent-Sage-abb")
 load_dotenv(".env.local")
@@ -53,6 +54,8 @@ class DefaultAgent(Agent):
         )
         await context.wait_for_playout()  # Ensure the agent finishes their current speech
         await context.session.aclose()
+
+
 
     # async def on_message(self, message: str):
     #     self.practice_count += 1
@@ -165,10 +168,25 @@ async def entrypoint(ctx: JobContext):
             f"final: {event.is_final}, "
             f"speaker id: {event.speaker_id}"
         )
-        if event.is_final:
-            # Schedule agent's async handle_turn
-            asyncio.create_task(agent_instance.handle_turn(session))
 
+        if not event.is_final:
+            return
+
+        payload = {
+            "type": "user_transcript",
+            "text": event.transcript,
+            "language": event.language,
+            "speaker_id": event.speaker_id,
+        }
+
+        asyncio.create_task(
+            ctx.room.local_participant.publish_data(
+                json.dumps(payload).encode("utf-8"),
+                topic="transcript",
+            )
+        )
+
+        asyncio.create_task(agent_instance.handle_turn(session))
 
     # Start session
     await session.start(
