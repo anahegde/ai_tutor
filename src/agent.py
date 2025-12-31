@@ -106,7 +106,7 @@ class DefaultAgent(Agent):
         # Start the silence timer immediately
         asyncio.create_task(self.reset_silence_timer(self.session))
         await self.session.say(
-            f"Hello {self.user_name}! Welcome to Parlo. I’m Jessica, your English Grammar and Pronunciation Coach. We are starting our {self.level} lesson on {self.topic}. Are you ready to begin?",
+            f"Hello {self.user_name}! Welcome to Parlo. I’m Jessica, your English Grammar and Pronunciation Coach. We are starting our lesson on {self.topic}. Are you ready to begin?",
             allow_interruptions=True,
         )
 
