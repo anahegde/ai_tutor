@@ -193,9 +193,6 @@ async def entrypoint(ctx: JobContext):
             "text": text,
         }
 
-        # Print payload nicely
-        import json
-
         # Forward to client
         asyncio.create_task(
             ctx.room.local_participant.publish_data(
